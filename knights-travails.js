@@ -31,31 +31,37 @@ class Knight {
     if (x < 0 || y < 0 || x > 7 || y > 7) {
       throw new Error("Cannot move to posinulltion outside of board");
     }
+    this.updatedVisited(x, y);
     this.position = { x, y };
-    this.checkVisited(x, y);
+    this.visited = this.checkVisited(x, y);
   }
 
   // creates move graph
   generateNextMoves(
-    node = new Node(this.position.x, this.position.y),
+    node = this.next,
+    visited = this.visited,
     x = this.position.x,
     y = this.position.y
   ) {
-    if (this.checkVisited(x, y) === false || this.checkValid(x, y) === false) {
+    if (visited === true || this.checkValid(x, y) === false) {
       return null;
     }
 
     const nextPositions = this.nextPossible(x, y);
-    return node;
+    console.log(nextPositions);
 
     if (nextPositions) {
       nextPositions.forEach((position, index) => {
-        const [p1, p2] = position;
-        const key = `next${index}`;
-        const newNode = new Node(position);
-        node[key] = this.generateNextMoves(newNode, p1, p2);
+        if (position) {
+          const [p1, p2] = position;
+          this.updatedVisited(p1, p2);
+          const key = `next${index + 1}`;
+          const newNode = new Node(position);
+          node[key] = this.generateNextMoves(newNode, p1, p2);
+        }
       });
     }
+    return node;
   }
 
   checkValid(x, y) {
@@ -89,15 +95,19 @@ class Knight {
   checkVisited(x, y, gameBoard = this.board.board) {
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       if (gameBoard[x][y]) {
-        return true; // Already visited
+        return true;
       } else {
-        gameBoard[x][y] = true; // Mark as visited
-        return false; // Not visited before
+        return false;
       }
-    } else {
-      // Handle out-of-bounds access or undefined gameBoard[x]
-      return true; // Consider it as visited to avoid potential errors
     }
+  }
+
+  updatedVisited(x, y, gameBoard = this.board.board) {
+    if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
+      gameBoard[x][y] = true;
+      return true;
+    }
+    return false;
   }
 }
 
