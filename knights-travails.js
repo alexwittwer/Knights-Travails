@@ -38,7 +38,7 @@ class Knight {
 
   // creates move graph
   generateNextMoves(
-    node = this.next,
+    node = new Node(this.position),
     visited = this.visited,
     x = this.position.x,
     y = this.position.y
@@ -48,16 +48,16 @@ class Knight {
     }
 
     const nextPositions = this.nextPossible(x, y);
-    console.log(nextPositions);
 
-    if (nextPositions) {
+    if (nextPositions[0] !== undefined) {
       nextPositions.forEach((position, index) => {
-        if (position) {
+        if (position !== undefined) {
           const [p1, p2] = position;
-          this.updatedVisited(p1, p2);
           const key = `next${index + 1}`;
-          const newNode = new Node(position);
-          node[key] = this.generateNextMoves(newNode, p1, p2);
+          this.updatedVisited(p1, p2);
+          const newNode = new Node(p1, p2);
+          node[`next ${index + 1}`] = newNode;
+          this.generateNextMoves(newNode, visited, p1, p2);
         }
       });
     }
@@ -112,15 +112,12 @@ class Knight {
 }
 
 class Node {
-  constructor(x = null, y = null, next = null) {
-    this.next = null;
-    this.position = { x, y };
+  constructor(x = null, y = null) {
+    this.positionx = x;
+    this.positiony = y;
   }
 }
 
 const piece = new Knight({ x: 0, y: 0 });
 console.log(piece);
 
-// offsets
-// x +- 2 | y +- 1
-// x +- 1 | y +- 2
