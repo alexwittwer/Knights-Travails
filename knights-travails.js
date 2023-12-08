@@ -29,15 +29,72 @@ class Knight {
   }
 
   setAt(x, y) {
+    console.log("Piece moved");
     if (x < 0 || y < 0 || x > 7 || y > 7) {
       throw new Error("Cannot move to position outside of board");
     }
-    this.updatedVisited(x, y);
-    this.next = this.nextPossible(x, y);
-    this.position = { x, y };
+    if (this.checkVisited(x, y)) {
+      console.warn("node has already been visited");
+      return null;
+    } else {
+      this.updatedVisited(x, y);
+      this.next = this.nextPossible(x, y);
+      this.position = { x, y };
+    }
   }
 
-  bfsPath(x, y) {}
+  _EXPERIMENTALbfsPathNode(start, target) {
+    if (!this.checkValid(x2, y2))
+      throw new Error("Cannot path to invalid parameters");
+
+    this.setAt(start);
+    const q = [];
+    let nextMoves = this.nextPossible();
+    nextMoves.forEach((node) => {
+      q.push(node);
+    });
+
+    while (q[0] !== undefined) {
+      const nextNode = q.shift();
+      if (nextNode === target) {
+        console.log(nextNode);
+        return console.log("we got there!");
+      } else {
+        this.setAt(nextNode);
+        nextMoves = this.nextPossible();
+        nextMoves.forEach((node) => {
+          q.push(node);
+        });
+      }
+    }
+  }
+
+  bfsPath([x1, y1], [x2, y2]) {
+    if (!this.checkValid(x2, y2))
+      throw new Error("Cannot path to invalid parameters");
+
+    this.setAt(x1, y1);
+    const q = [];
+    let nextMoves = this.nextPossible();
+    nextMoves.forEach((item) => {
+      q.push(item);
+    });
+
+    while (q[0] !== undefined) {
+      const [a, b] = q.shift();
+      if (a === x2 && b === y2) {
+        console.log(a, b);
+        return console.log("we got there!");
+      } else {
+        this.setAt(a, b);
+        console.log(a, b);
+        nextMoves = this.nextPossible();
+        nextMoves.forEach((item) => {
+          q.push(item);
+        });
+      }
+    }
+  }
 
   checkValid(x, y) {
     if (x > 7 || y > 7 || x < 0 || y < 0) {
@@ -83,6 +140,11 @@ class Knight {
       return true;
     }
     return false;
+  }
+  reset() {
+    this.position = { x: 0, y: 0 };
+    this.board = new Chessboard();
+    this.next = this.nextPossible();
   }
 }
 
