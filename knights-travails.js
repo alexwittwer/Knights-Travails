@@ -23,46 +23,21 @@ class Knight {
   constructor({ x = 0, y = 0 }) {
     this.position = { x, y };
     this.board = new Chessboard();
-    this.visited = this.checkVisited(this.position.x, this.position.y);
-    this.next = this.generateNextMoves();
+    this.next = this.nextPossible();
+
+    this.updatedVisited(this.position.x, this.position.y);
   }
 
   setAt(x, y) {
     if (x < 0 || y < 0 || x > 7 || y > 7) {
-      throw new Error("Cannot move to posinulltion outside of board");
+      throw new Error("Cannot move to position outside of board");
     }
     this.updatedVisited(x, y);
+    this.next = this.nextPossible(x, y);
     this.position = { x, y };
-    this.visited = this.checkVisited(x, y);
   }
 
-  // creates move graph
-  generateNextMoves(
-    node = new Node(this.position),
-    visited = this.visited,
-    x = this.position.x,
-    y = this.position.y
-  ) {
-    if (visited === true || this.checkValid(x, y) === false) {
-      return null;
-    }
-
-    const nextPositions = this.nextPossible(x, y);
-
-    if (nextPositions[0] !== undefined) {
-      nextPositions.forEach((position, index) => {
-        if (position !== undefined) {
-          const [p1, p2] = position;
-          const key = `next${index + 1}`;
-          this.updatedVisited(p1, p2);
-          const newNode = new Node(p1, p2);
-          node[`next ${index + 1}`] = newNode;
-          this.generateNextMoves(newNode, visited, p1, p2);
-        }
-      });
-    }
-    return node;
-  }
+  bfsPath(x, y) {}
 
   checkValid(x, y) {
     if (x > 7 || y > 7 || x < 0 || y < 0) {
@@ -113,11 +88,40 @@ class Knight {
 
 class Node {
   constructor(x = null, y = null) {
-    this.positionx = x;
-    this.positiony = y;
+    this.x = x;
+    this.y = y;
   }
 }
 
 const piece = new Knight({ x: 0, y: 0 });
 console.log(piece);
 
+// TODO
+/*
+  generateNextMoves(
+    node = new Node(this.position),
+    visited = this.visited,
+    x = this.position.x,
+    y = this.position.y
+  ) {
+    if (visited === true || this.checkValid(x, y) === false) {
+      return null;
+    }
+
+    const nextPositions = this.nextPossible(x, y);
+
+    if (nextPositions[0] !== undefined) {
+      nextPositions.forEach((position, index) => {
+        if (position !== undefined) {
+          const [p1, p2] = position;
+          const key = `next${index + 1}`;
+          this.updatedVisited(p1, p2);
+          const newNode = new Node(p1, p2);
+          node[`next ${index + 1}`] = newNode;
+          this.generateNextMoves(newNode, visited, p1, p2);
+        }
+      });
+    }
+    return node;
+  }
+*/
