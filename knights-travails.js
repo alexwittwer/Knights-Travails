@@ -4,11 +4,11 @@ class Knight {
     this.visited = this.drawBoard();
     this.next = this.nextPossible();
 
-    // Set current position as visited when class is initialized
+    /** Set current position as visited when class is initialized */
     this.updateVisited(this.position.x, this.position.y);
   }
 
-  /** Fills chessboard as an array of 1/0s {default: all 0s}*/
+  /** Fills chessboard as an array of 0s */
   drawBoard() {
     const SIZE = 8;
     const board = [];
@@ -23,7 +23,7 @@ class Knight {
     return board;
   }
 
-  /** sets knight at (x, y) position on chessboard */
+  /** Sets knight at (x, y) position on chessboard */
   moveTo(x, y) {
     if (x < 0 || y < 0 || x > 7 || y > 7) {
       throw new Error("Cannot move to position outside of board");
@@ -36,12 +36,16 @@ class Knight {
     }
   }
 
-  /** Returns a string with the shortest possible path from start -> target */
+  /**
+   * Start: [x1, y1] | Target: [x2, y2]
+   *
+   * Returns a string with the shortest possible path from start -> target
+   */
   knightsPath([x1, y1], [x2, y2]) {
     if (!this.checkValid(x2, y2))
       throw new Error("Cannot path to invalid parameters");
 
-    // reset board with [x1, y1]
+    /** Reset board with [x1, y1] */
     this.reset();
     this.moveTo(x1, y1);
     const path = {};
@@ -76,12 +80,12 @@ class Knight {
     }
   }
 
-  /** Checks if [x, y] would be in the board*/
+  /** Checks if [x, y] would be in the board */
   checkValid(x, y) {
     return x > 7 || y > 7 || x < 0 || y < 0 ? false : true;
   }
 
-  /** returns total number of visited squares */
+  /** Returns total number of visited squares */
   countVisited() {
     let count = 0;
 
@@ -94,7 +98,7 @@ class Knight {
     return count;
   }
 
-  /** Generates a list of next possible [x, y] values from an [x, y] position */
+  /** Generates a list of next possible [x, y] values from an [x, y] position {default: this.position} */
   nextPossible(x = this.position.x, y = this.position.y) {
     if (x === null || y === null) return null;
     const possibleArray = [
@@ -115,14 +119,16 @@ class Knight {
   }
 
   /** Checks if [x, y] has been visited on chessboard */
-  checkVisited(x, y, gameBoard = this.visited) {
+  checkVisited(x, y) {
+    const gameBoard = this.visited;
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       return gameBoard[x][y] ? true : false;
     }
   }
 
   /** Updates chessboard with [x, y] */
-  updateVisited(x, y, gameBoard = this.visited) {
+  updateVisited(x, y) {
+    const gameBoard = this.visited;
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       gameBoard[x][y] = 1;
       return true;
