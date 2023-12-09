@@ -25,71 +25,56 @@ class Knight {
     this.board = new Chessboard();
     this.next = this.nextPossible();
 
-    this.updatedVisited(this.position.x, this.position.y);
+    this.updateVisited(this.position.x, this.position.y);
   }
 
   setAt(x, y) {
-    console.log("Piece moved");
     if (x < 0 || y < 0 || x > 7 || y > 7) {
       throw new Error("Cannot move to position outside of board");
-    }
-    if (this.checkVisited(x, y)) {
-      console.warn("node has already been visited");
-      return null;
+    } else if (this.checkVisited(x, y)) {
+      throw new Error("Node already visited");
     } else {
-      this.updatedVisited(x, y);
+      this.updateVisited(x, y);
       this.next = this.nextPossible(x, y);
       this.position = { x, y };
     }
   }
 
-  _EXPERIMENTALbfsPathNode(start, target) {
+  knightsPath([x1, y1], [x2, y2]) {
     if (!this.checkValid(x2, y2))
       throw new Error("Cannot path to invalid parameters");
-
-    this.setAt(start);
-    const q = [];
-    let nextMoves = this.nextPossible();
-    nextMoves.forEach((node) => {
-      q.push(node);
-    });
-
-    while (q[0] !== undefined) {
-      const nextNode = q.shift();
-      if (nextNode === target) {
-        console.log(nextNode);
-        return console.log("we got there!");
-      } else {
-        this.setAt(nextNode);
-        nextMoves = this.nextPossible();
-        nextMoves.forEach((node) => {
-          q.push(node);
-        });
-      }
-    }
-  }
-
-  bfsPath([x1, y1], [x2, y2]) {
-    if (!this.checkValid(x2, y2))
-      throw new Error("Cannot path to invalid parameters");
-
+    // reset board first
+    this.reset();
     this.setAt(x1, y1);
+    const path = {}; // init a path
     const q = [];
+
     let nextMoves = this.nextPossible();
     nextMoves.forEach((item) => {
+      const key = `[${item[0]}, ${item[1]}]`;
+      path[key] = `[${x1}, ${y1}]`;
       q.push(item);
     });
 
-    while (q[0] !== undefined) {
+    while (q.length > 0) {
       const [a, b] = q.shift();
       if (a === x2 && b === y2) {
-        console.log(a, b);
-        return console.log("we got there!");
-      } else {
+        const finalPath = [];
+        let current = `[${x2}, ${y2}]`;
+
+        while (path[current]) {
+          finalPath.unshift(current);
+          current = path[current];
+        }
+
+        finalPath.unshift(`[${x1}, ${y1}]`);
+        return "Path found:" + finalPath.join(" -> ");
+      } else if (this.checkValid(a, b) && !this.checkVisited(a, b)) {
         this.setAt(a, b);
-        console.log(a, b);
-        nextMoves = this.nextPossible();
+        let nextMoves = this.nextPossible();
         nextMoves.forEach((item) => {
+          const key = `[${item[0]}, ${item[1]}]`;
+          path[key] = `[${a}, ${b}]`;
           q.push(item);
         });
       }
@@ -107,20 +92,18 @@ class Knight {
   nextPossible(x = this.position.x, y = this.position.y) {
     const possibleArray = [
       [x + 1, y + 2],
-      [x + 1, y - 2],
-      [x - 1, y + 2],
-      [x - 1, y - 2],
       [x + 2, y + 1],
+      [x + 1, y - 2],
       [x + 2, y - 1],
+      [x - 1, y + 2],
       [x - 2, y + 1],
+      [x - 1, y - 2],
       [x - 2, y - 1],
     ];
 
     return possibleArray.filter((pair) => {
       const [x1, y1] = pair;
-      return (
-        this.checkVisited(x1, y1) === false && this.checkValid(x1, y1) === true
-      );
+      return !this.checkVisited(x1, y1) && this.checkValid(x1, y1);
     });
   }
 
@@ -134,7 +117,7 @@ class Knight {
     }
   }
 
-  updatedVisited(x, y, gameBoard = this.board.board) {
+  updateVisited(x, y, gameBoard = this.board.board) {
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       gameBoard[x][y] = true;
       return true;
@@ -148,42 +131,4 @@ class Knight {
   }
 }
 
-class Node {
-  constructor(x = null, y = null) {
-    this.x = x;
-    this.y = y;
-  }
-}
-
-const piece = new Knight({ x: 0, y: 0 });
-console.log(piece);
-
-// TODO
-/*
-  generateNextMoves(
-    node = new Node(this.position),
-    visited = this.visited,
-    x = this.position.x,
-    y = this.position.y
-  ) {
-    if (visited === true || this.checkValid(x, y) === false) {
-      return null;
-    }
-
-    const nextPositions = this.nextPossible(x, y);
-
-    if (nextPositions[0] !== undefined) {
-      nextPositions.forEach((position, index) => {
-        if (position !== undefined) {
-          const [p1, p2] = position;
-          const key = `next${index + 1}`;
-          this.updatedVisited(p1, p2);
-          const newNode = new Node(p1, p2);
-          node[`next ${index + 1}`] = newNode;
-          this.generateNextMoves(newNode, visited, p1, p2);
-        }
-      });
-    }
-    return node;
-  }
-*/
+const knight = new Knight({ x: 0, y: 0 });
