@@ -86,11 +86,7 @@ class Knight {
   }
 
   checkValid(x, y) {
-    if (x > 7 || y > 7 || x < 0 || y < 0) {
-      return false;
-    }
-
-    return true;
+    return x > 7 || y > 7 || x < 0 || y < 0 ? false : true;
   }
 
   nextPossible(x = this.position.x, y = this.position.y) {
@@ -113,11 +109,7 @@ class Knight {
 
   checkVisited(x, y, gameBoard = this.board.board) {
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
-      if (gameBoard[x][y]) {
-        return true;
-      } else {
-        return false;
-      }
+      return gameBoard[x][y] ? true : false;
     }
   }
 
