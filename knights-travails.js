@@ -68,8 +68,12 @@ class Knight {
         }
 
         finalPath.unshift(`[${x1}, ${y1}]`);
-        return "Path found:" + finalPath.join(" -> ");
-      } else if (this.checkValid(a, b) && !this.checkVisited(a, b)) {
+        return (
+          "Path found in " +
+          `${finalPath.length} moves: ` +
+          finalPath.join(" -> ")
+        );
+      } else if (!this.checkVisited(a, b)) {
         this.setAt(a, b);
         let nextMoves = this.nextPossible();
         nextMoves.forEach((item) => {
