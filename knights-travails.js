@@ -81,18 +81,31 @@ class Knight {
     return x > 7 || y > 7 || x < 0 || y < 0 ? false : true;
   }
 
+  /** returns total number of visited squares */
+  countVisited() {
+    let count = 0;
+
+    this.visited.forEach((row) => {
+      row.forEach((value) => {
+        count += value;
+      });
+    });
+
+    return count;
+  }
+
   /** Generates a list of next possible [x, y] values from an [x, y] position */
   nextPossible(x = this.position.x, y = this.position.y) {
     if (x === null || y === null) return null;
     const possibleArray = [
-      [x + 1, y + 2],
-      [x + 2, y + 1],
       [x + 1, y - 2],
-      [x + 2, y - 1],
-      [x - 1, y + 2],
       [x - 2, y + 1],
       [x - 1, y - 2],
       [x - 2, y - 1],
+      [x + 2, y - 1],
+      [x - 1, y + 2],
+      [x + 1, y + 2],
+      [x + 2, y + 1],
     ];
 
     return possibleArray.filter((pair) => {
