@@ -1,15 +1,14 @@
-class Chessboard {
-  constructor() {
-    this.board = this.drawBoard();
+class Knight {
+  constructor({ x = 0, y = 0 }) {
+    this.position = { x, y };
+    this.visited = this.drawBoard();
+    this.next = this.nextPossible();
+
+    // Set current position as visited when class is initialized
+    this.updateVisited(this.position.x, this.position.y);
   }
 
-  /**
-   * Fills current chessboard as an array of true/false {default: all false}
-   * @param {Number} SIZE - size of chessboard
-   * @param {Number} i - iterator
-   * @param {Number} j - iterator
-   * @return {Array} - returns a chessboard array of false entries
-   */
+  /** Fills chessboard as an array of 1/0s {default: all 0s}*/
   drawBoard() {
     const SIZE = 8;
     const board = [];
@@ -17,29 +16,14 @@ class Chessboard {
     for (let i = 0; i < SIZE; i++) {
       board[i] = [];
       for (let j = 0; j < SIZE; j++) {
-        board[i][j] = false;
+        board[i][j] = 0;
       }
     }
 
     return board;
   }
-}
 
-class Knight {
-  constructor({ x = 0, y = 0 }) {
-    this.position = { x, y };
-    this.board = new Chessboard();
-    this.next = this.nextPossible();
-
-    // Set current position as visited when class is initialized
-    this.updateVisited(this.position.x, this.position.y);
-  }
-
-  /**
-   *
-   * @param {Number} x x-position on chessboard
-   * @param {Number} y y-position on chessboard
-   */
+  /** sets knight at (x, y) position on chessboard */
   moveTo(x, y) {
     if (x < 0 || y < 0 || x > 7 || y > 7) {
       throw new Error("Cannot move to position outside of board");
@@ -52,16 +36,12 @@ class Knight {
     }
   }
 
-  /**
-   * Returns a string with the shortest possible path from start -> target
-   * @param {Array} param0 [x, y] start pos
-   * @param {Array} param1 [x, y] end pos
-   * @returns {String}
-   */
+  /** Returns a string with the shortest possible path from start -> target */
   knightsPath([x1, y1], [x2, y2]) {
     if (!this.checkValid(x2, y2))
       throw new Error("Cannot path to invalid parameters");
-    // reset board first
+
+    // reset board with [x1, y1]
     this.reset();
     this.moveTo(x1, y1);
     const path = {};
@@ -82,6 +62,7 @@ class Knight {
         }
 
         finalPath.unshift(`[${x1}, ${y1}]`);
+        this.moveTo(x2, y2);
         return (
           "Path found in " +
           `${finalPath.length - 1} moves: ` +
@@ -95,23 +76,14 @@ class Knight {
     }
   }
 
-  /**
-   * Checks if [x, y] would be in the board
-   * @param {Number} x x position
-   * @param {Number} y y position
-   * @returns {Boolean}
-   */
+  /** Checks if [x, y] would be in the board*/
   checkValid(x, y) {
     return x > 7 || y > 7 || x < 0 || y < 0 ? false : true;
   }
 
-  /**
-   * Generates a list of next possible [x, y] values from an [x, y] position
-   * @param {Number} x x position {default: current x pos}
-   * @param {Number} y y position {default: current y pos}
-   * @returns {Array} array of [x, y] positions
-   */
+  /** Generates a list of next possible [x, y] values from an [x, y] position */
   nextPossible(x = this.position.x, y = this.position.y) {
+    if (x === null || y === null) return null;
     const possibleArray = [
       [x + 1, y + 2],
       [x + 2, y + 1],
@@ -129,46 +101,32 @@ class Knight {
     });
   }
 
-  /**
-   * Checks if [x, y] has been visited on chessboard
-   * @param {Number} x x pos
-   * @param {Number} y y pos
-   * @param {Array} gameBoard current chessboard
-   * @returns {Boolean}
-   */
-  checkVisited(x, y, gameBoard = this.board.board) {
+  /** Checks if [x, y] has been visited on chessboard */
+  checkVisited(x, y, gameBoard = this.visited) {
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       return gameBoard[x][y] ? true : false;
     }
   }
 
-  /**
-   * Updates chessboard with [x, y]
-   * @param {Number} x x pos
-   * @param {Number} y y pos
-   * @param {Array} gameBoard current chessboard
-   * @returns {Boolean}
-   */
-  updateVisited(x, y, gameBoard = this.board.board) {
+  /** Updates chessboard with [x, y] */
+  updateVisited(x, y, gameBoard = this.visited) {
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
-      gameBoard[x][y] = true;
+      gameBoard[x][y] = 1;
       return true;
     }
     return false;
   }
 
-  /**
-   * Resets chessboard
-   */
+  /** Resets chessboard */
   reset() {
-    this.position = { x: 0, y: 0 };
-    this.board = new Chessboard();
+    this.position = { x: null, y: null };
+    this.visited = this.drawBoard();
     this.next = this.nextPossible();
   }
 
   /**
    * Updates the provided path object
-   * @param {Object} path path of nodes visited in form [x1, y1]: "[x2, y2]"
+   * @param {Map} path path of nodes visited in form [x1, y1]: "[x2, y2]"
    */
   updatePath(path) {
     this.next.forEach((item) => {
