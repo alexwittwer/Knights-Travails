@@ -124,10 +124,7 @@ class Knight {
     this.next = this.nextPossible();
   }
 
-  /**
-   * Updates the provided path object
-   * @param {Map} path path of nodes visited in form [x1, y1]: "[x2, y2]"
-   */
+  /** Updates the provided path object in form [x1, y1]: "[x2, y2]" */
   updatePath(path) {
     this.next.forEach((item) => {
       const { x, y } = this.position;
@@ -136,10 +133,7 @@ class Knight {
     });
   }
 
-  /**
-   * Updates provided queue
-   * @param {Array} queue current queue in form of [x, y] values
-   */
+  /** Updates provided queue in form of [x, y] values */
   updateQueue(queue) {
     this.next.forEach((item) => {
       queue.push(item);
