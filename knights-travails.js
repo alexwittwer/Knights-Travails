@@ -1,3 +1,5 @@
+const SIZE = 8; // size of chessboard
+
 class Knight {
   constructor({ x = 0, y = 0 }) {
     this.position = { x, y };
@@ -8,9 +10,8 @@ class Knight {
     this.updateVisited(this.position.x, this.position.y);
   }
 
-  /** Fills chessboard as an array of 0s */
+  /** Fills SIZE x SIZE {default 8}chessboard as an array of 0s */
   drawBoard() {
-    const SIZE = 8;
     const board = [];
 
     for (let i = 0; i < SIZE; i++) {
@@ -25,7 +26,7 @@ class Knight {
 
   /** Sets knight at (x, y) position on chessboard */
   moveTo(x, y) {
-    if (x < 0 || y < 0 || x > 7 || y > 7) {
+    if (!this.checkValid(x, y)) {
       throw new Error("Cannot move to position outside of board");
     } else if (this.checkVisited(x, y)) {
       throw new Error("Node already visited");
@@ -36,11 +37,7 @@ class Knight {
     }
   }
 
-  /**
-   * Start: [x1, y1] | Target: [x2, y2]
-   *
-   * Returns a string with the shortest possible path from start -> target
-   */
+  /** Returns a string with the shortest possible path from start -> target */
   knightsPath([x1, y1], [x2, y2]) {
     if (!this.checkValid(x2, y2))
       throw new Error("Cannot path to invalid parameters");
@@ -78,11 +75,15 @@ class Knight {
         this.updateQueue(q);
       }
     }
+
+    throw new Error(
+      `Could not find path from [${x1}, ${y1}] => [${x2}, ${y2}]`
+    );
   }
 
-  /** Checks if [x, y] would be in the board */
+  /** Checks if [x, y] would be in a SIZE x SIZE board plane*/
   checkValid(x, y) {
-    return x > 7 || y > 7 || x < 0 || y < 0 ? false : true;
+    return x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0 ? false : true;
   }
 
   /** Returns total number of visited squares */
