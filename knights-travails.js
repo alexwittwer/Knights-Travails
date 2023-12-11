@@ -7,10 +7,10 @@ class Knight {
     this.next = this.nextPossible();
 
     /** Set current position as visited when class is initialized */
-    this.updateVisited(this.position.x, this.position.y);
+    this.updateVisited();
   }
 
-  /** Fills SIZE x SIZE {default 8}chessboard as an array of 0s */
+  /** Fills SIZE x SIZE {default 8} chessboard as an array of 0s */
   drawBoard() {
     const board = [];
 
@@ -31,9 +31,9 @@ class Knight {
     } else if (this.checkVisited(x, y)) {
       throw new Error("Node already visited");
     } else {
-      this.updateVisited(x, y);
-      this.next = this.nextPossible(x, y);
       this.position = { x, y };
+      this.next = this.nextPossible(x, y);
+      this.updateVisited();
     }
   }
 
@@ -81,22 +81,20 @@ class Knight {
     );
   }
 
-  /** Checks if [x, y] would be in a SIZE x SIZE board plane*/
-  checkValid(x, y) {
-    return x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0 ? false : true;
+  /** Updates the provided path object in form [x1, y1]: "[x2, y2]" */
+  updatePath(path) {
+    this.next.forEach((item) => {
+      const { x, y } = this.position;
+      const key = `[${item[0]}, ${item[1]}]`;
+      path[key] = `[${x}, ${y}]`;
+    });
   }
 
-  /** Returns total number of visited squares */
-  countVisited() {
-    let count = 0;
-
-    this.visited.forEach((row) => {
-      row.forEach((value) => {
-        count += value;
-      });
+  /** Updates provided queue in form of [x, y] values */
+  updateQueue(queue) {
+    this.next.forEach((item) => {
+      queue.push(item);
     });
-
-    return count;
   }
 
   /** Generates a list of next possible [x, y] values from an [x, y] position {default: this.position} */
@@ -127,8 +125,13 @@ class Knight {
     }
   }
 
+  /** Checks if [x, y] would be in a SIZE x SIZE board plane*/
+  checkValid(x, y) {
+    return x > SIZE - 1 || y > SIZE - 1 || x < 0 || y < 0 ? false : true;
+  }
+
   /** Updates chessboard with [x, y] */
-  updateVisited(x, y) {
+  updateVisited(x = this.position.x, y = this.position.y) {
     const gameBoard = this.visited;
     if (gameBoard[x] !== undefined && gameBoard[x][y] !== undefined) {
       gameBoard[x][y] = 1;
@@ -137,27 +140,24 @@ class Knight {
     return false;
   }
 
+  /** Returns total number of visited squares */
+  countVisited() {
+    let count = 0;
+
+    this.visited.forEach((row) => {
+      row.forEach((value) => {
+        count += value;
+      });
+    });
+
+    return count;
+  }
+
   /** Resets chessboard */
   reset() {
     this.position = { x: null, y: null };
     this.visited = this.drawBoard();
     this.next = this.nextPossible();
-  }
-
-  /** Updates the provided path object in form [x1, y1]: "[x2, y2]" */
-  updatePath(path) {
-    this.next.forEach((item) => {
-      const { x, y } = this.position;
-      const key = `[${item[0]}, ${item[1]}]`;
-      path[key] = `[${x}, ${y}]`;
-    });
-  }
-
-  /** Updates provided queue in form of [x, y] values */
-  updateQueue(queue) {
-    this.next.forEach((item) => {
-      queue.push(item);
-    });
   }
 }
 
