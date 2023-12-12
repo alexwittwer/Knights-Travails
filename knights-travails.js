@@ -1,4 +1,4 @@
-const SIZE = 8; // size of chessboard
+const SIZE = 1000; // size of chessboard
 
 class Knight {
   constructor({ x = 0, y = 0 }) {
@@ -102,8 +102,7 @@ class Knight {
    * @throws if x | y null
    */
   nextPossible(x = this.position.x, y = this.position.y) {
-    if (x === null || y === null)
-      throw new Error("Cannot generate positiosn from null");
+    if (x === null || y === null) return null;
     const possibleArray = [
       [x + 1, y - 2],
       [x - 2, y + 1],
