@@ -97,9 +97,13 @@ class Knight {
     });
   }
 
-  /** Generates a list of next possible [x, y] values from an [x, y] position {default: this.position} */
+  /** Generates a list of next possible [x, y] values from an [x, y] position {default: this.position}
+   * @return Array of two-value arrays (eg [[x1, y1], [x2, y2]....)
+   * @throws if x | y null
+   */
   nextPossible(x = this.position.x, y = this.position.y) {
-    if (x === null || y === null) return null;
+    if (x === null || y === null)
+      throw new Error("Cannot generate positiosn from null");
     const possibleArray = [
       [x + 1, y - 2],
       [x - 2, y + 1],
